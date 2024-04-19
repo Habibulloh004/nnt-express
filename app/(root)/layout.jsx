@@ -15,8 +15,9 @@ const manrope = Manrope({
 
 export default function RootLayout({ children }) {
   const navControls = useAnimationControls();
-  const { open } = usePopup();
+  const { open, setLoading } = usePopup();
   useEffect(() => {
+    setLoading(false);
     if (open) {
       navControls.start("open");
     } else {
@@ -57,7 +58,9 @@ export default function RootLayout({ children }) {
         <div className="header absolute w-full h-[60px] flex items-center">
           <Header />
         </div>
-        <div className="child grow w-full h-[85%] mt-[60px] p-4">{children}</div>
+        <div className="child grow w-full h-[85%] mt-[60px] p-4">
+          {children}
+        </div>
       </motion.div>
     </main>
   );

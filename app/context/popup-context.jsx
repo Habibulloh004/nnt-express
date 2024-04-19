@@ -9,6 +9,8 @@ export const PopupProvider = ({ children }) => {
   const [open, setOpen] = useState(true);
   const [filtering, setFiltering] = useState("");
   const [openDrop, setOpenDrop] = useState(false);
+  const [stepper, setStepper] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const togglePopup = () => {
     setOpen((prev) => !prev);
@@ -20,6 +22,8 @@ export const PopupProvider = ({ children }) => {
   return (
     <Popup.Provider
       value={{
+        loading,
+        setLoading,
         open,
         togglePopup,
         toggleDrop,
@@ -27,6 +31,8 @@ export const PopupProvider = ({ children }) => {
         setFiltering,
         openDrop,
         setOpenDrop,
+        stepper,
+        setStepper,
       }}
     >
       {children}

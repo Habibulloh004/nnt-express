@@ -2,7 +2,6 @@
 import * as React from "react";
 import * as z from "zod";
 
-import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import {
@@ -20,7 +19,9 @@ import { BigLogo, Logo } from "../../public";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { roles } from "@/lib/utils";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { usePopup } from "../context/popup-context";
 
 const formSchema = z.object({
   companyName: z.string().nonempty(),
@@ -29,7 +30,8 @@ const formSchema = z.object({
 });
 
 function Login() {
-  const cookies = document.cookie;
+  const [loadingState, setLoadingState] = useState(false);
+  const { setLoading } = usePopup();
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -40,25 +42,25 @@ function Login() {
     },
   });
 
-  useEffect(() => {
-    if (cookies) {
-      redirect("/");
-    }
-  }, [cookies]);
-
-  const handleSubmit = (value) => {
+  const handleSubmit = async (value) => {
     const hasUser = roles.find((role) => role.email === value.email);
-    if (!hasUser) {
-      toast.error("Error with credintials!");
-      return;
-    }
-    form.reset();
-    document.cookie = `session=${encodeURIComponent(
-      JSON.stringify(value)
-    )}; Max-Age=${60 * 60 * 24}; Path=/;`;
+    try {
+      if (!hasUser) {
+        toast.error("Error with credintials!");
+        return;
+      }
+      setLoadingState(true);
+      router.push("/load-management/load-trip");
 
-    localStorage.setItem("session", JSON.stringify(value));
-    router.push("/");
+      document.cookie = `session=${encodeURIComponent(
+        JSON.stringify(value)
+      )}; Max-Age=${60 * 60 * 24}; Path=/;`;
+
+      localStorage.setItem("session", JSON.stringify(value));
+    } catch (e) {
+      setLoadingState(false);
+      console.log(e);
+    }
   };
 
   return (
@@ -121,7 +123,13 @@ function Login() {
                   );
                 }}
               />
-              <Button type="submit">Sign in</Button>
+              <Button
+                disabled={loadingState}
+                type="submit"
+                onClick={() => setLoading(true)}
+              >
+                {loadingState ? "Loading..." : "Sign in"}
+              </Button>
             </form>
           </Form>
         </div>

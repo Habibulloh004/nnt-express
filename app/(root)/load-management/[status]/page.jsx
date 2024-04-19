@@ -32,14 +32,14 @@ const Status = async ({ params }) => {
     <>
       <ScrollArea className="w-full rounded-md">
         
-        <FakeTable
+        {/* <FakeTable
           data={loadData.data.results}
           columns={columns}
           dispatcher={dispatcherData.data.results}
           customer={customerData.data.results}
           truck={truckData.data.results}
           stop={stopData.data.results}
-        />
+        /> */}
       </ScrollArea>
     </>
   );
